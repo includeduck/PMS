@@ -5,6 +5,7 @@
 [![Django 5.2](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
 [![Tests Passing](https://img.shields.io/badge/tests-45%2F45%20passing-brightgreen.svg)](https://pytest.org/)
 [![Code Style: Clean](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://pep8.org/)
+[![Knowledge Graph](https://img.shields.io/badge/graphify-222%20nodes-blueviolet.svg)](graphify-out/graph.html)
 
 A modern, accessible, and secure web application designed for academic institutions to manage, catalog, and share research publications. Built for the **Vrije Universiteit Brussel (VUB)** academic community, this system streamlines scientific discovery while maintaining strict organizational access controls.
 
@@ -17,6 +18,7 @@ A modern, accessible, and secure web application designed for academic instituti
 - [👥 User Roles & Permissions](#-user-roles--permissions)
 - [📋 Supported Use Cases](#-supported-use-cases)
 - [🏛️ System Architecture](#️-system-architecture)
+- [🗺️ Codebase Knowledge Graph](#️-codebase-knowledge-graph)
 - [🚀 Quick Start Guide](#-quick-start-guide)
 - [🧪 Running Tests & Quality Assurance](#-running-tests--quality-assurance)
 - [🔄 CI/CD Pipeline](#-cicd-pipeline)
@@ -128,6 +130,22 @@ flowchart LR
 
 ---
 
+## 🗺️ Codebase Knowledge Graph
+
+The entire codebase architecture, data flows, and inter-module dependencies are mapped and tracked using **Graphify**:
+
+- 🌐 **Interactive Graph Visualizer**: Open [`graphify-out/graph.html`](graphify-out/graph.html) directly in your browser for an interactive force-directed graph.
+- 📊 **Architecture Audit Report**: See [`graphify-out/GRAPH_REPORT.md`](graphify-out/GRAPH_REPORT.md) for community detection, cohesion metrics, and structural insights.
+- 🧩 **Knowledge Scale**: **222 nodes** connected by **296 edges** across **29 cohesive architectural communities**.
+
+### Core Abstractions ("God Nodes"):
+1. `require_role()` — Central access control gatekeeper (19 connected edges).
+2. `base.html Layout & Navbar` — Unified presentation hub and navigation shell (19 connected edges).
+3. `TestUC06UserAccountManagement` & Core Test Suites — Automated regression verification anchors.
+4. `confirm_account()` & `issue_confirmation_token()` — Cryptographic account lifecycle services.
+
+---
+
 ## 🚀 Quick Start Guide
 
 Follow these simple steps to set up and run PMS locally on your machine.
@@ -235,9 +253,13 @@ PMS/
 │   ├── services.py                # Search, ZIP bundling & PDF/BibTeX/RIS extraction
 │   ├── views.py                   # Search, upload, download, edit views
 │   └── tests.py                   # Publication lifecycle test suite
-├── pms_project/                   # Django Project Configuration
+├── pms/                           # Django Project Configuration
 │   ├── settings.py                # Core configuration & media paths
 │   └── urls.py                    # Root URL router
+├── graphify-out/                  # Architecture Knowledge Graph Artifacts
+│   ├── graph.html                 # Interactive in-browser visualization
+│   ├── graph.json                 # GraphRAG-ready graph data
+│   └── GRAPH_REPORT.md            # Structural analysis and community audit
 ├── templates/                     # Accessible, responsive HTML templates
 │   ├── base.html                  # Global layout, alerts & role-aware navbar
 │   ├── accounts/                  # Registration, login, user admin templates
