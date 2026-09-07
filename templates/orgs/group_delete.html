@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Delete group {{ group_id }} — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-07 — Delete group {{ group_id }}. Live empty-member check is not implemented; group is not deleted.</p>
+<h1>Delete group {{ group_id }}</h1>
+<p>Member count would be shown here. Deletion is refused if the group is not empty.</p>
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" value="Confirm delete">
+</form>
+{% endblock %}

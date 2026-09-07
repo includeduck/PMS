@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Confirm account — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-01 — Confirm account with token. Token is not validated.</p>
+<h1>Confirm account</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="token">Confirmation token</label>
+  <input id="token" name="token" type="text">
+  <input type="submit" value="Confirm">
+</form>
+{% endblock %}

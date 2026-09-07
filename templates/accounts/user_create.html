@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Create user — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-06 — Create user (Administrator). Account is not saved.</p>
+<h1>Create user</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="username">Username</label>
+  <input id="username" name="username" type="text">
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password">
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email">
+  <label for="group">Group</label>
+  <input id="group" name="group" type="text">
+  <input type="submit" value="Create">
+</form>
+{% endblock %}

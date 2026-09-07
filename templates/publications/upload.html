@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Upload publication — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-05 — Upload publication. File and metadata are not saved.</p>
+<h1>Upload publication</h1>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label for="document">Document (pdf, ps, BibTeX, RIS)</label>
+  <input id="document" name="document" type="file">
+  <input type="submit" value="Upload">
+</form>
+{% endblock %}

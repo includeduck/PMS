@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit group {{ group_id }} — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-07 — Edit group {{ group_id }}. Changes are not saved.</p>
+<h1>Edit group {{ group_id }}</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="name">Name</label>
+  <input id="name" name="name" type="text">
+  <label for="description">Description / permissions</label>
+  <textarea id="description" name="description" rows="3"></textarea>
+  <label for="membership">Membership</label>
+  <input id="membership" name="membership" type="text">
+  <input type="submit" value="Save">
+</form>
+{% endblock %}

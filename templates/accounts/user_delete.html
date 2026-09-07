@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Delete user {{ user_id }} — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-06 — Delete user {{ user_id }}. Account is not deleted.</p>
+<h1>Delete user {{ user_id }}</h1>
+<p>Confirm deletion of this account (stub — no effect).</p>
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" value="Confirm delete">
+</form>
+{% endblock %}

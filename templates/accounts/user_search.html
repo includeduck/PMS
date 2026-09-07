@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Search users — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-06 — Search users. No query is executed.</p>
+<h1>Search users</h1>
+<form method="get">
+  <label for="q">Name, department, or role</label>
+  <input id="q" name="q" type="text">
+  <input type="submit" value="Search">
+</form>
+<p><a href="{% url 'accounts:user_create' %}">Create user</a></p>
+<p>Example stub links:
+  <a href="{% url 'accounts:user_edit' 1 %}">Edit user 1</a> ·
+  <a href="{% url 'accounts:user_delete' 1 %}">Delete user 1</a>
+</p>
+{% endblock %}

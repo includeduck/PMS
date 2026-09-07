@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Create group — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-07 — Create group. Group is not saved.</p>
+<h1>Create group</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="name">Group name</label>
+  <input id="name" name="name" type="text">
+  <label for="users">Initial users</label>
+  <input id="users" name="users" type="text">
+  <input type="submit" value="Create">
+</form>
+{% endblock %}

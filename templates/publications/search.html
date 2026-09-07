@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Search publications — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-03 — Search publications. Query is not executed.</p>
+<h1>Search publications</h1>
+<form method="get">
+  <label for="keywords">Keyword(s)</label>
+  <input id="keywords" name="keywords" type="text">
+  <label for="authors">Author(s)</label>
+  <input id="authors" name="authors" type="text">
+  <label for="date_from">Date from</label>
+  <input id="date_from" name="date_from" type="text">
+  <label for="date_to">Date to</label>
+  <input id="date_to" name="date_to" type="text">
+  <input type="submit" value="Search">
+</form>
+<p>Example stub result:
+  Title / Main author —
+  <a href="{% url 'publications:download' 1 %}">Download</a> ·
+  <a href="{% url 'publications:edit' 1 %}">Edit</a>
+</p>
+<p><a href="{% url 'publications:download_all' %}">Download all</a></p>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Network mode — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-02 — VUB-network substitute. Session flag is not written yet (explicit mode later).</p>
+<h1>Network mode</h1>
+<p>Current VUB-network mode (read-only stub): {{ vub_network_mode }}</p>
+<form method="post">
+  {% csrf_token %}
+  <label for="mode">Select connection</label>
+  <select id="mode" name="mode">
+    <option value="internet">General internet (Guest until login)</option>
+    <option value="vub">VUB network (VUB-Network User privileges)</option>
+  </select>
+  <input type="submit" value="Apply">
+</form>
+{% endblock %}

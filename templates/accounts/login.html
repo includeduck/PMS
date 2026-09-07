@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Log in — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-02 — Authenticate. Uses Django session login; role checks are not enforced yet.</p>
+<h1>Log in</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Log in">
+</form>
+{% endblock %}

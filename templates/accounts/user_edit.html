@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Edit user {{ user_id }} — PMS{% endblock %}
+{% block content %}
+<p class="stub-banner">STUB: UC-06 — Edit user {{ user_id }}. Changes are not saved.</p>
+<h1>Edit user {{ user_id }}</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="role">Role</label>
+  <select id="role" name="role">
+    <option>member</option>
+    <option>publisher</option>
+    <option>moderator</option>
+    <option>administrator</option>
+  </select>
+  <label for="department">Department</label>
+  <input id="department" name="department" type="text">
+  <input type="submit" value="Save">
+</form>
+{% endblock %}
