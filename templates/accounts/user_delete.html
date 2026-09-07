@@ -1,11 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Delete user {{ user_id }} — PMS{% endblock %}
+{% block title %}Delete User {{ target_user.username }} — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-06 — Delete user {{ user_id }}. Account is not deleted.</p>
-<h1>Delete user {{ user_id }}</h1>
-<p>Confirm deletion of this account (stub — no effect).</p>
+<h1>Delete User Account (UC-06)</h1>
+
+<div class="alert alert-warning">
+  <p><strong>Warning:</strong> Are you sure you want to permanently delete the account <strong>{{ target_user.username }}</strong>?</p>
+  <ul>
+    <li>Full Name: {{ target_user.get_full_name|default:"—" }}</li>
+    <li>Email: {{ target_user.email }}</li>
+    <li>Role: {{ target_user.get_role_display }}</li>
+    <li>Department: {{ target_user.department.name|default:"None" }}</li>
+  </ul>
+</div>
+
 <form method="post">
   {% csrf_token %}
-  <input type="submit" value="Confirm delete">
+  <input type="submit" value="Yes, Permanently Delete User" style="background: #dc2626; color: #fff; border: none;">
+  <a href="{% url 'accounts:user_search' %}" style="margin-left: 1rem;">Cancel</a>
 </form>
 {% endblock %}
+

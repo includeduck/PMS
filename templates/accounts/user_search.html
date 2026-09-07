@@ -1,16 +1,73 @@
 {% extends "base.html" %}
-{% block title %}Search users — PMS{% endblock %}
+{% block title %}Search Users — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-06 — Search users. No query is executed.</p>
-<h1>Search users</h1>
-<form method="get">
-  <label for="q">Name, department, or role</label>
-  <input id="q" name="q" type="text">
-  <input type="submit" value="Search">
-</form>
-<p><a href="{% url 'accounts:user_create' %}">Create user</a></p>
-<p>Example stub links:
-  <a href="{% url 'accounts:user_edit' 1 %}">Edit user 1</a> ·
-  <a href="{% url 'accounts:user_delete' 1 %}">Delete user 1</a>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>Manage Users (UC-06)</h1>
+  {% if is_admin %}
+    <a href="{% url 'accounts:user_create' %}" class="badge badge-admin" style="font-size: 0.9rem; padding: 0.5rem 1rem; text-decoration: none;">+ Create New User</a>
+  {% endif %}
+</div>
+
+<p>
+  {% if is_admin %}
+    Administrators can manage all user accounts across the system.
+  {% else %}
+    Moderators can view and edit user accounts within their own department.
+  {% endif %}
 </p>
+
+<form method="get" style="display: flex; gap: 0.5rem; align-items: center;">
+  <input id="q" name="q" type="text" placeholder="Search by username, name, email, department, or role" value="{{ query|default:'' }}" style="max-width: 30rem;">
+  <input type="submit" value="Search" style="margin-top: 0;">
+  {% if query %}
+    <a href="{% url 'accounts:user_search' %}" style="margin-left: 0.5rem;">Clear</a>
+  {% endif %}
+</form>
+
+{% if users %}
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+        <tr>
+          <td><strong>{{ u.username }}</strong></td>
+          <td>{{ u.get_full_name|default:"—" }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.department.name|default:"—" }}</td>
+          <td><span class="badge badge-{{ u.role }}">{{ u.get_role_display }}</span></td>
+          <td>
+            {% if u.is_locked %}
+              <span style="color: #dc2626; font-weight: bold;">Locked</span>
+            {% elif u.is_confirmed %}
+              <span style="color: #16a34a;">Active</span>
+            {% else %}
+              <span style="color: #f59e0b;">Unconfirmed</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'accounts:user_edit' u.pk %}">Edit</a>
+            {% if is_admin and u.pk != user.pk %}
+              · <a href="{% url 'accounts:user_delete' u.pk %}" style="color: #dc2626;">Delete</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-warning" style="margin-top: 1.5rem;">
+    No users found matching your search criteria.
+  </div>
+{% endif %}
 {% endblock %}
+

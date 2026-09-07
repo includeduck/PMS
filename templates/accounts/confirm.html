@@ -1,12 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Confirm account — PMS{% endblock %}
+{% block title %}Confirm Account — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-01 — Confirm account with token. Token is not validated.</p>
-<h1>Confirm account</h1>
+<h1>Confirm Account (UC-01)</h1>
+<p>Enter the confirmation token issued during registration to activate your account at Member level.</p>
+
+{% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
 <form method="post">
   {% csrf_token %}
-  <label for="token">Confirmation token</label>
-  <input id="token" name="token" type="text">
-  <input type="submit" value="Confirm">
+  <label for="token">Confirmation Token *</label>
+  <input id="token" name="token" type="text" value="{{ entered_token|default:'' }}" required placeholder="e.g. 16-character token">
+  <div>
+    <input type="submit" value="Confirm Account">
+  </div>
 </form>
+<p>Token expired or missing? Please contact the administrator or register again.</p>
 {% endblock %}
+

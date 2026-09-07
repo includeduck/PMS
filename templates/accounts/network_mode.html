@@ -1,16 +1,38 @@
 {% extends "base.html" %}
-{% block title %}Network mode — PMS{% endblock %}
+{% block title %}Network Mode — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-02 — VUB-network substitute. Session flag is not written yet (explicit mode later).</p>
-<h1>Network mode</h1>
-<p>Current VUB-network mode (read-only stub): {{ vub_network_mode }}</p>
+<h1>Network Mode Configuration (UC-02)</h1>
+<p>
+  The SRS specifies that users connected directly to the VUB network automatically receive
+  <strong>VUB-Network User</strong> privileges (allowing publication search and download without logging in).
+  This setting acts as the explicit session toggle for network mode.
+</p>
+
+<div class="alert {% if vub_network_mode %}alert-success{% else %}alert-info{% endif %}">
+  Current Connection Status:
+  <strong>
+    {% if vub_network_mode %}
+      VUB Campus Network (VUB-Network User privileges active)
+    {% else %}
+      General Internet (Guest privileges until login)
+    {% endif %}
+  </strong>
+</div>
+
 <form method="post">
   {% csrf_token %}
-  <label for="mode">Select connection</label>
+  <label for="mode">Select Simulated Connection:</label>
   <select id="mode" name="mode">
-    <option value="internet">General internet (Guest until login)</option>
-    <option value="vub">VUB network (VUB-Network User privileges)</option>
+    <option value="internet" {% if not vub_network_mode %}selected{% endif %}>General Internet (Guest)</option>
+    <option value="vub" {% if vub_network_mode %}selected{% endif %}>VUB Campus Network (VUB-Network User)</option>
   </select>
-  <input type="submit" value="Apply">
+  <div>
+    <input type="submit" value="Update Network Mode">
+  </div>
 </form>
+
+<p style="margin-top: 1.5rem;">
+  <a href="{% url 'publications:search' %}">Go to Publications Search &rarr;</a>
+</p>
 {% endblock %}
+

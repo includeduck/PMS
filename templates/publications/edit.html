@@ -1,18 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Edit publication {{ publication_id }} — PMS{% endblock %}
+{% block title %}Edit Publication — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-05 — Edit publication {{ publication_id }}. Metadata is not saved. No delete control (Publisher must not delete).</p>
-<h1>Edit publication {{ publication_id }}</h1>
-<form method="post">
+<h1>Edit Publication (UC-05)</h1>
+<p>
+  Update bibliographic metadata for <strong>{{ publication.title }}</strong>.
+  <em>(Note: Publishers do not have authority to delete publications).</em>
+</p>
+
+<form method="post" enctype="multipart/form-data" style="background: #fff; padding: 1.5rem; border: 1px solid #ddd; border-radius: 4px;">
   {% csrf_token %}
-  <label for="title">Title</label>
-  <input id="title" name="title" type="text">
-  <label for="authors">Authors</label>
-  <input id="authors" name="authors" type="text">
-  <label for="year">Year</label>
-  <input id="year" name="year" type="text">
-  <label for="abstract">Abstract</label>
-  <textarea id="abstract" name="abstract" rows="4"></textarea>
-  <input type="submit" value="Save">
+  <div>
+    <label for="title">Title *</label>
+    <input id="title" name="title" type="text" value="{{ publication.title }}" required>
+  </div>
+
+  <div>
+    <label for="authors">Author(s) *</label>
+    <input id="authors" name="authors" type="text" value="{{ publication.authors }}" required>
+  </div>
+
+  <div>
+    <label for="year">Year</label>
+    <input id="year" name="year" type="number" value="{{ publication.year|default:'' }}">
+  </div>
+
+  <div>
+    <label for="abstract">Abstract</label>
+    <textarea id="abstract" name="abstract" rows="5">{{ publication.abstract }}</textarea>
+  </div>
+
+  <div style="margin-top: 1rem;">
+    <label for="file">Replace Document File (Optional):</label>
+    {% if publication.file %}
+      <p style="margin: 0.2rem 0; font-size: 0.9rem; color: #475569;">
+        Current file: <strong>{{ publication.file.name }}</strong>
+      </p>
+    {% endif %}
+    <input id="file" name="file" type="file" accept=".pdf,.ps,.bib,.ris,.txt">
+  </div>
+
+  <div style="margin-top: 1.5rem;">
+    <input type="submit" value="Save Changes">
+    <a href="{% url 'publications:mine' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+

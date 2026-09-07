@@ -1,14 +1,44 @@
 {% extends "base.html" %}
-{% block title %}Create group — PMS{% endblock %}
+{% block title %}Create Group — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-07 — Create group. Group is not saved.</p>
-<h1>Create group</h1>
+<h1>Create Department Group (UC-07)</h1>
+<p>Create a new department group to organize users and manage department boundaries.</p>
+
+{% if errors %}
+  <div class="alert alert-error">
+    <ul>
+      {% for err in errors %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
 <form method="post">
   {% csrf_token %}
-  <label for="name">Group name</label>
-  <input id="name" name="name" type="text">
-  <label for="users">Initial users</label>
-  <input id="users" name="users" type="text">
-  <input type="submit" value="Create">
+  <div>
+    <label for="name">Group Name *</label>
+    <input id="name" name="name" type="text" value="{{ form_data.name|default:'' }}" required placeholder="e.g. Department of Computer Science">
+  </div>
+
+  <div>
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="3">{{ form_data.description|default:'' }}</textarea>
+  </div>
+
+  <div>
+    <label for="users">Initial Member Users (Hold Ctrl/Cmd to select multiple):</label>
+    <select id="users" name="users" multiple style="height: 120px;">
+      {% for u in users %}
+        <option value="{{ u.id }}">{{ u.username }} ({{ u.get_full_name|default:u.email }})</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div style="margin-top: 1.5rem;">
+    <input type="submit" value="Create Group">
+    <a href="{% url 'orgs:group_search' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+

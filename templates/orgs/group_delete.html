@@ -1,11 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Delete group {{ group_id }} — PMS{% endblock %}
+{% block title %}Delete Group {{ group.name }} — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-07 — Delete group {{ group_id }}. Live empty-member check is not implemented; group is not deleted.</p>
-<h1>Delete group {{ group_id }}</h1>
-<p>Member count would be shown here. Deletion is refused if the group is not empty.</p>
-<form method="post">
-  {% csrf_token %}
-  <input type="submit" value="Confirm delete">
-</form>
+<h1>Delete Department Group (UC-07)</h1>
+
+{% if error %}
+  <div class="alert alert-error">
+    <strong>Action Blocked:</strong> {{ error }}
+  </div>
+{% endif %}
+
+<div style="background: #fff; padding: 1.5rem; border: 1px solid #ddd; border-radius: 4px;">
+  <h2>Group: {{ group.name }}</h2>
+  <p>{{ group.description|default:"(No description provided)" }}</p>
+  <p>Current Active Members: <strong>{{ member_count }}</strong></p>
+
+  {% if member_count > 0 %}
+    <div class="alert alert-warning" style="margin: 1rem 0;">
+      <strong>Cannot Delete:</strong> This group currently has <strong>{{ member_count }}</strong> assigned member(s).
+      In accordance with PMS integrity rules (SRS §3.2.29), groups cannot be deleted while they contain members.
+      Please reassign or remove all members before deleting this group.
+    </div>
+    <a href="{% url 'orgs:group_edit' group.id %}" style="display: inline-block; padding: 0.4rem 0.8rem; background: #0284c7; color: #fff; text-decoration: none; border-radius: 4px;">
+      Edit Group Membership
+    </a>
+    <a href="{% url 'orgs:group_search' %}" style="margin-left: 1rem;">Back to Groups</a>
+  {% else %}
+    <p style="color: #16a34a;">&check; This group has no members and is safe to delete.</p>
+    <form method="post" style="margin-top: 1rem;">
+      {% csrf_token %}
+      <input type="submit" value="Confirm Delete Group" style="background: #dc2626; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+      <a href="{% url 'orgs:group_search' %}" style="margin-left: 1rem;">Cancel</a>
+    </form>
+  {% endif %}
+</div>
 {% endblock %}
+

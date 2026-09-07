@@ -1,12 +1,50 @@
 {% extends "base.html" %}
-{% block title %}Upload publication — PMS{% endblock %}
+{% block title %}Upload Publication — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-05 — Upload publication. File and metadata are not saved.</p>
-<h1>Upload publication</h1>
-<form method="post" enctype="multipart/form-data">
+<h1>Upload Publication (UC-05)</h1>
+<p>
+  Publishers can upload publications in supported formats (PDF, PostScript, BibTeX, RIS).
+  Bibliographic metadata (Title, Authors, Year, Abstract) will be automatically extracted from the file,
+  or you can specify them below to override.
+</p>
+
+<form method="post" enctype="multipart/form-data" style="background: #fff; padding: 1.5rem; border: 1px solid #ddd; border-radius: 4px;">
   {% csrf_token %}
-  <label for="document">Document (pdf, ps, BibTeX, RIS)</label>
-  <input id="document" name="document" type="file">
-  <input type="submit" value="Upload">
+
+  <div>
+    <label for="document"><strong>Select Document File * (PDF, PS, BibTeX, RIS)</strong></label>
+    <input id="document" name="document" type="file" required accept=".pdf,.ps,.bib,.ris,.txt">
+  </div>
+
+  <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #e2e8f0;">
+  <p style="color: #64748b; font-size: 0.9rem;">
+    <em>Optional: Pre-fill or override metadata (otherwise extracted from document automatically):</em>
+  </p>
+
+  <div>
+    <label for="title">Title (Optional)</label>
+    <input id="title" name="title" type="text" placeholder="Leave blank to auto-extract">
+  </div>
+
+  <div>
+    <label for="authors">Author(s) (Optional)</label>
+    <input id="authors" name="authors" type="text" placeholder="Leave blank to auto-extract">
+  </div>
+
+  <div>
+    <label for="year">Year (Optional)</label>
+    <input id="year" name="year" type="number" placeholder="e.g. 2026">
+  </div>
+
+  <div>
+    <label for="abstract">Abstract (Optional)</label>
+    <textarea id="abstract" name="abstract" rows="4" placeholder="Leave blank to auto-extract"></textarea>
+  </div>
+
+  <div style="margin-top: 1.5rem;">
+    <input type="submit" value="Upload & Save Publication">
+    <a href="{% url 'publications:mine' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+

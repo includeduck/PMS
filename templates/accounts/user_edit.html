@@ -1,19 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Edit user {{ user_id }} — PMS{% endblock %}
+{% block title %}Edit User {{ target_user.username }} — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-06 — Edit user {{ user_id }}. Changes are not saved.</p>
-<h1>Edit user {{ user_id }}</h1>
+<h1>Edit User: {{ target_user.username }} (UC-06)</h1>
+
 <form method="post">
   {% csrf_token %}
+  <label for="first_name">First Name</label>
+  <input id="first_name" name="first_name" type="text" value="{{ target_user.first_name }}">
+
+  <label for="last_name">Last Name</label>
+  <input id="last_name" name="last_name" type="text" value="{{ target_user.last_name }}">
+
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" value="{{ target_user.email }}">
+
   <label for="role">Role</label>
   <select id="role" name="role">
-    <option>member</option>
-    <option>publisher</option>
-    <option>moderator</option>
-    <option>administrator</option>
+    {% for val, label in roles %}
+      <option value="{{ val }}" {% if target_user.role == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
   </select>
-  <label for="department">Department</label>
-  <input id="department" name="department" type="text">
-  <input type="submit" value="Save">
+
+  {% if is_admin %}
+    <label for="department">Department</label>
+    <select id="department" name="department">
+      <option value="">-- No Department --</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}" {% if target_user.department_id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+
+    <div style="margin-top: 1rem;">
+      <label style="display: inline;">
+        <input type="checkbox" name="is_locked" value="1" {% if target_user.is_locked %}checked{% endif %} style="width: auto;">
+        <strong>Lock this account</strong> (prevents login)
+      </label>
+    </div>
+  {% else %}
+    <p>Department: <strong>{{ target_user.department.name|default:"None" }}</strong> (Moderators cannot reassign departments)</p>
+  {% endif %}
+
+  <div style="margin-top: 1.5rem;">
+    <input type="submit" value="Save Changes">
+    <a href="{% url 'accounts:user_search' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+

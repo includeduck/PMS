@@ -1,11 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Log in — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-02 — Authenticate. Uses Django session login; role checks are not enforced yet.</p>
-<h1>Log in</h1>
+<h1>Log In (UC-02)</h1>
+<p>Log in to access your publications, manage user accounts, or manage groups.</p>
+
+{% if form.non_field_errors %}
+  <div class="alert alert-error">
+    {% for err in form.non_field_errors %}
+      <p style="margin: 0;">{{ err }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Log in">
+  <div>
+    <label for="id_username">Username</label>
+    <input id="id_username" name="username" type="text" required autofocus value="{{ form.username.value|default:'' }}">
+    {% if form.username.errors %}<div class="alert alert-error">{{ form.username.errors }}</div>{% endif %}
+  </div>
+
+  <div>
+    <label for="id_password">Password</label>
+    <input id="id_password" name="password" type="password" required>
+    {% if form.password.errors %}<div class="alert alert-error">{{ form.password.errors }}</div>{% endif %}
+  </div>
+
+  <div>
+    <input type="submit" value="Log In">
+  </div>
 </form>
+
+<p>Need an account? <a href="{% url 'accounts:register' %}">Register here</a> · <a href="{% url 'accounts:confirm' %}">Confirm account with token</a></p>
+<p>Are you connected to the university campus? <a href="{% url 'accounts:network_mode' %}">Switch to VUB Network mode</a>.</p>
 {% endblock %}
+

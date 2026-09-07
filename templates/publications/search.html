@@ -1,23 +1,123 @@
 {% extends "base.html" %}
-{% block title %}Search publications — PMS{% endblock %}
+{% block title %}Search Publications — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-03 — Search publications. Query is not executed.</p>
-<h1>Search publications</h1>
-<form method="get">
-  <label for="keywords">Keyword(s)</label>
-  <input id="keywords" name="keywords" type="text">
-  <label for="authors">Author(s)</label>
-  <input id="authors" name="authors" type="text">
-  <label for="date_from">Date from</label>
-  <input id="date_from" name="date_from" type="text">
-  <label for="date_to">Date to</label>
-  <input id="date_to" name="date_to" type="text">
-  <input type="submit" value="Search">
+<h1>Search Publications (UC-03)</h1>
+
+<form method="get" style="background: #fff; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1.5rem;">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div>
+      <label for="keywords">Keyword(s) (in title or abstract)</label>
+      <input id="keywords" name="keywords" type="text" value="{{ criteria.keywords|default:'' }}">
+    </div>
+    <div>
+      <label for="authors">Author(s)</label>
+      <input id="authors" name="authors" type="text" value="{{ criteria.authors|default:'' }}">
+    </div>
+    <div>
+      <label for="date_from">Year From</label>
+      <input id="date_from" name="date_from" type="number" placeholder="e.g. 2010" value="{{ criteria.date_from|default:'' }}">
+    </div>
+    <div>
+      <label for="date_to">Year To</label>
+      <input id="date_to" name="date_to" type="number" placeholder="e.g. 2026" value="{{ criteria.date_to|default:'' }}">
+    </div>
+  </div>
+
+  <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+      <label for="ordering" style="display: inline; margin-right: 0.5rem;">Sort by:</label>
+      <select id="ordering" name="ordering" style="width: auto; display: inline;">
+        <option value="-year" {% if criteria.ordering == '-year' %}selected{% endif %}>Year (Newest first)</option>
+        <option value="year" {% if criteria.ordering == 'year' %}selected{% endif %}>Year (Oldest first)</option>
+        <option value="title" {% if criteria.ordering == 'title' %}selected{% endif %}>Title (A-Z)</option>
+        <option value="-title" {% if criteria.ordering == '-title' %}selected{% endif %}>Title (Z-A)</option>
+        <option value="authors" {% if criteria.ordering == 'authors' %}selected{% endif %}>Author (A-Z)</option>
+      </select>
+    </div>
+
+    <div>
+      <input type="submit" value="Search Publications" style="margin-top: 0;">
+      <a href="{% url 'publications:search' %}" style="margin-left: 0.5rem;">Reset</a>
+    </div>
+  </div>
 </form>
-<p>Example stub result:
-  Title / Main author —
-  <a href="{% url 'publications:download' 1 %}">Download</a> ·
-  <a href="{% url 'publications:edit' 1 %}">Edit</a>
-</p>
-<p><a href="{% url 'publications:download_all' %}">Download all</a></p>
+
+{% if page_obj.object_list %}
+  <form method="post" action="{% url 'publications:download_all' %}">
+    {% csrf_token %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+      <p style="margin: 0;">Found <strong>{{ total_count }}</strong> publication(s):</p>
+      <div>
+        <button type="submit" style="margin-top: 0; background: #0284c7; color: white; border: none; border-radius: 4px; padding: 0.4rem 0.8rem; cursor: pointer;">
+          📦 Download Selected (ZIP)
+        </button>
+        <a href="{% url 'publications:download_all' %}?keywords={{ criteria.keywords }}&authors={{ criteria.authors }}&date_from={{ criteria.date_from }}&date_to={{ criteria.date_to }}"
+           style="margin-left: 0.5rem; text-decoration: none; padding: 0.4rem 0.8rem; background: #e2e8f0; border-radius: 4px; color: #1e293b;">
+          Download All in Search (ZIP)
+        </a>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30px;"><input type="checkbox" onclick="document.querySelectorAll('.pub-cb').forEach(c => c.checked = this.checked)"></th>
+          <th>Title</th>
+          <th>Author(s)</th>
+          <th>Year</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pub in page_obj %}
+          <tr>
+            <td><input type="checkbox" name="pids" value="{{ pub.id }}" class="pub-cb"></td>
+            <td>
+              <strong>{{ pub.title }}</strong>
+              {% if pub.abstract %}
+                <p style="font-size: 0.85rem; color: #475569; margin: 0.3rem 0 0;">{{ pub.abstract|truncatewords:25 }}</p>
+              {% endif %}
+            </td>
+            <td>{{ pub.authors }}</td>
+            <td>{{ pub.year|default:"—" }}</td>
+            <td style="white-space: nowrap;">
+              {% if pub.file %}
+                <a href="{% url 'publications:download' pub.id %}" style="color: #0284c7; font-weight: bold;">Download</a>
+              {% else %}
+                <a href="{% url 'publications:download' pub.id %}" style="color: #64748b;">(Abstract)</a>
+              {% endif %}
+              {% if can_manage %}
+                {% if user.role == 'administrator' or user.role == 'moderator' or pub.owner_id == user.id %}
+                  · <a href="{% url 'publications:edit' pub.id %}">Edit</a>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+
+  {% if page_obj.has_other_pages %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&keywords={{ criteria.keywords }}&authors={{ criteria.authors }}&date_from={{ criteria.date_from }}&date_to={{ criteria.date_to }}&ordering={{ criteria.ordering }}">&laquo; Previous</a>
+      {% endif %}
+      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&keywords={{ criteria.keywords }}&authors={{ criteria.authors }}&date_from={{ criteria.date_from }}&date_to={{ criteria.date_to }}&ordering={{ criteria.ordering }}">Next &raquo;</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% else %}
+  <div class="alert alert-warning">
+    {% if has_searched %}
+      No publications match your search criteria.
+    {% else %}
+      No publications have been uploaded yet.
+    {% endif %}
+  </div>
+{% endif %}
 {% endblock %}
+

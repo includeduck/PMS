@@ -1,16 +1,54 @@
 {% extends "base.html" %}
-{% block title %}Search groups — PMS{% endblock %}
+{% block title %}Manage Groups — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-07 — Search groups. No query is executed.</p>
-<h1>Search groups</h1>
-<form method="get">
-  <label for="q">Group name</label>
-  <input id="q" name="q" type="text">
-  <input type="submit" value="Search">
-</form>
-<p><a href="{% url 'orgs:group_create' %}">Create group</a></p>
-<p>Example stub links:
-  <a href="{% url 'orgs:group_edit' 1 %}">Edit group 1</a> ·
-  <a href="{% url 'orgs:group_delete' 1 %}">Delete group 1</a>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>Manage Department Groups (UC-07)</h1>
+  <a href="{% url 'orgs:group_create' %}" class="badge badge-admin" style="font-size: 0.9rem; padding: 0.5rem 1rem; text-decoration: none;">+ Create New Group</a>
+</div>
+
+<p>
+  Administrators can create, search, edit, and delete department groups.
+  Groups organize users and departments across the university.
 </p>
+
+<form method="get" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1.5rem;">
+  <input id="q" name="q" type="text" placeholder="Search by group name or description" value="{{ query|default:'' }}" style="max-width: 25rem;">
+  <input type="submit" value="Search" style="margin-top: 0;">
+  {% if query %}
+    <a href="{% url 'orgs:group_search' %}" style="margin-left: 0.5rem;">Clear</a>
+  {% endif %}
+</form>
+
+{% if groups %}
+  <table>
+    <thead>
+      <tr>
+        <th>Group Name</th>
+        <th>Description</th>
+        <th>Members Count</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in groups %}
+        <tr>
+          <td><strong>{{ g.name }}</strong></td>
+          <td>{{ g.description|default:"—" }}</td>
+          <td>
+            <span class="badge">{{ g.member_count }} member{{ g.member_count|pluralize }}</span>
+          </td>
+          <td>
+            <a href="{% url 'orgs:group_edit' g.pk %}">Edit</a> ·
+            <a href="{% url 'orgs:group_delete' g.pk %}" style="color: #dc2626;">Delete</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-warning">
+    No groups found. <a href="{% url 'orgs:group_create' %}">Create a new group</a>.
+  </div>
+{% endif %}
 {% endblock %}
+

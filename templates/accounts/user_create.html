@@ -1,18 +1,55 @@
 {% extends "base.html" %}
-{% block title %}Create user — PMS{% endblock %}
+{% block title %}Create User — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-06 — Create user (Administrator). Account is not saved.</p>
-<h1>Create user</h1>
+<h1>Create User Account (UC-06)</h1>
+<p>Administrator-only action to create a user account directly at any role level.</p>
+
+{% if errors %}
+  <div class="alert alert-error">
+    <ul>
+      {% for err in errors %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
 <form method="post">
   {% csrf_token %}
-  <label for="username">Username</label>
-  <input id="username" name="username" type="text">
-  <label for="password">Password</label>
-  <input id="password" name="password" type="password">
-  <label for="email">Email</label>
-  <input id="email" name="email" type="email">
-  <label for="group">Group</label>
-  <input id="group" name="group" type="text">
-  <input type="submit" value="Create">
+  <label for="username">Username *</label>
+  <input id="username" name="username" type="text" value="{{ form_data.username|default:'' }}" required>
+
+  <label for="password">Password *</label>
+  <input id="password" name="password" type="password" required>
+
+  <label for="email">Email *</label>
+  <input id="email" name="email" type="email" value="{{ form_data.email|default:'' }}" required>
+
+  <label for="first_name">First Name</label>
+  <input id="first_name" name="first_name" type="text" value="{{ form_data.first_name|default:'' }}">
+
+  <label for="last_name">Last Name</label>
+  <input id="last_name" name="last_name" type="text" value="{{ form_data.last_name|default:'' }}">
+
+  <label for="role">Assigned Role</label>
+  <select id="role" name="role">
+    {% for val, label in roles %}
+      <option value="{{ val }}" {% if form_data.role == val %}selected{% elif not form_data and val == 'member' %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="department">Department / Group</label>
+  <select id="department" name="department">
+    <option value="">-- No Department --</option>
+    {% for dept in departments %}
+      <option value="{{ dept.id }}" {% if form_data.department == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+    {% endfor %}
+  </select>
+
+  <div>
+    <input type="submit" value="Create User Account">
+    <a href="{% url 'accounts:user_search' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+

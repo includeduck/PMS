@@ -8,25 +8,58 @@
 </head>
 <body>
   <header>
-    <strong>PMS</strong>
-    <nav>
-      <a href="{% url 'accounts:register' %}">Register</a>
-      <a href="{% url 'accounts:confirm' %}">Confirm</a>
-      <a href="{% url 'accounts:login' %}">Log in</a>
-      <form class="inline-form" method="post" action="{% url 'accounts:logout' %}">
-        {% csrf_token %}
-        <button type="submit">Log off</button>
-      </form>
-      <a href="{% url 'accounts:network_mode' %}">Network mode</a>
-      <a href="{% url 'publications:search' %}">Search</a>
-      <a href="{% url 'publications:upload' %}">Upload</a>
-      <a href="{% url 'publications:mine' %}">My publications</a>
-      <a href="{% url 'accounts:user_search' %}">Users</a>
-      <a href="{% url 'orgs:group_search' %}">Groups</a>
-    </nav>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="font-size: 1.2rem; margin-right: 1.5rem;">PMS</strong>
+        <nav style="display: inline;">
+          <a href="{% url 'publications:search' %}">Search</a>
+          {% if user.is_authenticated and user.role in 'publisher,moderator,administrator' %}
+            <a href="{% url 'publications:upload' %}">Upload</a>
+            <a href="{% url 'publications:mine' %}">My Publications</a>
+          {% endif %}
+          {% if user.is_authenticated and user.role in 'moderator,administrator' %}
+            <a href="{% url 'accounts:user_search' %}">Users</a>
+          {% endif %}
+          {% if user.is_authenticated and user.role == 'administrator' %}
+            <a href="{% url 'orgs:group_search' %}">Groups</a>
+          {% endif %}
+          <a href="{% url 'accounts:network_mode' %}">Network Mode</a>
+        </nav>
+      </div>
+      <div>
+        {% if user.is_authenticated %}
+          <span style="margin-right: 1rem;">
+            👤 {{ user.username }}
+            <span class="badge badge-{{ user.role }}">{{ user.get_role_display }}</span>
+          </span>
+          <form class="inline-form" method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" style="color: #cbd5e1; text-decoration: underline;">Log off</button>
+          </form>
+        {% else %}
+          {% if request.vub_network_mode %}
+            <span class="badge badge-vub" style="margin-right: 1rem;">VUB Network</span>
+          {% else %}
+            <span class="badge" style="margin-right: 1rem;">Guest</span>
+          {% endif %}
+          <a href="{% url 'accounts:login' %}">Log in</a>
+          <a href="{% url 'accounts:register' %}">Register</a>
+          <a href="{% url 'accounts:confirm' %}">Confirm</a>
+        {% endif %}
+      </div>
+    </div>
   </header>
   <main>
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
     {% block content %}{% endblock %}
   </main>
 </body>
 </html>
+

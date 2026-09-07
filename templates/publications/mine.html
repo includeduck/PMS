@@ -1,8 +1,50 @@
 {% extends "base.html" %}
-{% block title %}My publications — PMS{% endblock %}
+{% block title %}My Publications — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-05 — My publications. List is empty until persistence is implemented.</p>
-<h1>My publications</h1>
-<p>No owned publications to display (stub).</p>
-<p><a href="{% url 'publications:edit' 1 %}">Edit publication 1</a></p>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1>My Publications (UC-05)</h1>
+  <a href="{% url 'publications:upload' %}" class="badge badge-publisher" style="font-size: 0.9rem; padding: 0.5rem 1rem; text-decoration: none;">+ Upload Publication</a>
+</div>
+
+<p>Manage and review the publications that you have uploaded to the PMS.</p>
+
+{% if publications %}
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author(s)</th>
+        <th>Year</th>
+        <th>Uploaded</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pub in publications %}
+        <tr>
+          <td>
+            <strong>{{ pub.title }}</strong>
+            {% if pub.abstract %}
+              <p style="font-size: 0.85rem; color: #475569; margin: 0.3rem 0 0;">{{ pub.abstract|truncatewords:20 }}</p>
+            {% endif %}
+          </td>
+          <td>{{ pub.authors }}</td>
+          <td>{{ pub.year|default:"—" }}</td>
+          <td>{{ pub.uploaded_at|date:"Y-m-d" }}</td>
+          <td style="white-space: nowrap;">
+            <a href="{% url 'publications:edit' pub.id %}">Edit Metadata</a>
+            {% if pub.file %}
+              · <a href="{% url 'publications:download' pub.id %}" style="color: #0284c7;">Download</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info" style="margin-top: 1.5rem;">
+    You haven't uploaded any publications yet. <a href="{% url 'publications:upload' %}">Upload your first publication</a>.
+  </div>
+{% endif %}
 {% endblock %}
+

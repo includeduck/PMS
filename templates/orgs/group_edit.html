@@ -1,16 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Edit group {{ group_id }} — PMS{% endblock %}
+{% block title %}Edit Group {{ group.name }} — PMS{% endblock %}
 {% block content %}
-<p class="stub-banner">STUB: UC-07 — Edit group {{ group_id }}. Changes are not saved.</p>
-<h1>Edit group {{ group_id }}</h1>
-<form method="post">
+<h1>Edit Group: {{ group.name }} (UC-07)</h1>
+
+{% if errors %}
+  <div class="alert alert-error">
+    <ul>
+      {% for err in errors %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post" style="background: #fff; padding: 1.5rem; border: 1px solid #ddd; border-radius: 4px;">
   {% csrf_token %}
-  <label for="name">Name</label>
-  <input id="name" name="name" type="text">
-  <label for="description">Description / permissions</label>
-  <textarea id="description" name="description" rows="3"></textarea>
-  <label for="membership">Membership</label>
-  <input id="membership" name="membership" type="text">
-  <input type="submit" value="Save">
+  <div>
+    <label for="name">Group Name *</label>
+    <input id="name" name="name" type="text" value="{{ group.name }}" required>
+  </div>
+
+  <div>
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="3">{{ group.description }}</textarea>
+  </div>
+
+  <div>
+    <label for="users">Group Membership (Hold Ctrl/Cmd to select/deselect members):</label>
+    <select id="users" name="users" multiple style="height: 150px;">
+      {% for u in all_users %}
+        <option value="{{ u.id }}" {% if u.id in current_member_ids %}selected{% endif %}>
+          {{ u.username }} ({{ u.get_full_name|default:u.email }})
+          {% if u.department_id and u.department_id != group.id %}
+            [Currently in: {{ u.department.name }}]
+          {% endif %}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div style="margin-top: 1.5rem;">
+    <input type="submit" value="Save Changes">
+    <a href="{% url 'orgs:group_search' %}" style="margin-left: 1rem;">Cancel</a>
+  </div>
 </form>
 {% endblock %}
+
