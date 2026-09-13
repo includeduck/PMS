@@ -302,3 +302,4 @@ PMS/
 ## 📄 License & Academic Credit
 
 Developed for **Software Quality Engineering (Semester 5)** at **Vrije Universiteit Brussel (VUB)**.
+# SQE-PMS
